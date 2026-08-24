@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="color-scheme" content="light dark">
 <title>Photographic Report</title>
-<link rel="shortcut icon" href="https://unsec.unssc.org/pluginfile.php/1/tool_tenant/favicon/5/un-logo.png" />
 <style>
 :root{
   --bg:#F2F4F5; --surface:#FFFFFF; --ink:#12171A; --muted:#69747C;
@@ -84,6 +83,13 @@ section{margin-top:22px}
 .actions{grid-column:3;display:flex;align-items:center;gap:14px;margin-top:8px}
 .rm{background:none;border:none;padding:0;color:var(--muted);font-size:11px;cursor:pointer;text-decoration:underline;text-underline-offset:2px}
 .rm:hover{color:var(--danger)}
+.rot{display:inline-flex;align-items:center;gap:5px;background:none;border:1px solid var(--rule-strong);
+  border-radius:3px;padding:3px 7px;font-size:10px;letter-spacing:.05em;text-transform:uppercase;
+  font-weight:600;color:var(--muted);cursor:pointer}
+.rot svg{width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.rot.on{color:var(--accent);border-color:var(--accent)}
+.rot.on svg{transform:rotate(90deg)}
+.rot:disabled{opacity:.3;cursor:default}
 .move{display:inline-flex;gap:3px}
 .move button{background:none;border:1px solid var(--rule-strong);border-radius:2px;width:20px;height:18px;line-height:1;
   font-size:10px;color:var(--muted);cursor:pointer;padding:0}
@@ -108,7 +114,7 @@ footer{margin:26px 0 6px;font-size:11px;color:var(--muted);text-align:center;lin
 <header>
   <div class="wrap hbar">
     <div class="mark" aria-hidden="true"></div>
-    <h1><span id="t-app">Photographic Report</span><small id="t-sub">Offline · SHA-256 · EXIF</small></h1>
+    <h1><span id="t-app">Photographic Report</span><small id="t-sub">Offline · SHA-256 · EXIF · 1-1</small></h1>
     <div class="ctrl">
       <select class="lang" id="lang" aria-label="Language">
         <option value="en">EN</option><option value="fr">FR</option>
@@ -163,42 +169,42 @@ footer{margin:26px 0 6px;font-size:11px;color:var(--muted);text-align:center;lin
    1. LANGUAGES
    ============================================================ */
 const I18N = {
-  en:{app:"Photographic Report",sub:"Offline · SHA-256 · EXIF",caseinfo:"Case information",
+  en:{app:"Photographic Report",sub:"Offline · SHA-256 · EXIF · 1-1",caseinfo:"Case information",
     author:"Author",caseno:"Case number",photos:"Photos",add:"Take or choose photos",
     hint:"Coordinates are read from each photo's EXIF data. Enable location for your camera app before shooting, or the field stays empty.",
     clear:"Clear all",empty:"No photos yet.",go:"Generate PDF",foot:"Runs entirely in your browser. Nothing is uploaded.",
     date:"Date & time",gps:"Coordinates",cam:"Camera",hash:"SHA-256",file:"File",remove:"Remove",
-    na:"not in EXIF",unreadable:"Preview unavailable in this browser",
+    na:"not in EXIF",unreadable:"Preview unavailable in this browser",rotate:"Sideways",
     reading:"Reading",building:"Building page",ready:"Ready",done:"PDF saved",
     photo:"Photo",page:"Page",generated:"Generated",total:"Number of photos",
     note:"Each SHA-256 hash is computed on the original image file. Date, coordinates and camera are read from the file's EXIF metadata; empty fields were not recorded by the capturing device.",
     exhibit:"Photographic exhibits"},
-  fr:{app:"Rapport photographique",sub:"Hors ligne · SHA-256 · EXIF",caseinfo:"Informations du dossier",
+  fr:{app:"Rapport photographique",sub:"Hors ligne · SHA-256 · EXIF · 1-1",caseinfo:"Informations du dossier",
     author:"Auteur",caseno:"Numéro de dossier",photos:"Photos",add:"Prendre ou choisir des photos",
     hint:"Les coordonnées sont lues dans les données EXIF de chaque photo. Activez la localisation de l'appareil photo avant la prise de vue, sinon le champ reste vide.",
     clear:"Tout effacer",empty:"Aucune photo.",go:"Générer le PDF",foot:"Fonctionne entièrement dans votre navigateur. Rien n'est envoyé.",
     date:"Date et heure",gps:"Coordonnées",cam:"Appareil",hash:"SHA-256",file:"Fichier",remove:"Supprimer",
-    na:"absent de l'EXIF",unreadable:"Aperçu indisponible dans ce navigateur",
+    na:"absent de l'EXIF",unreadable:"Aperçu indisponible dans ce navigateur",rotate:"Pivoté",
     reading:"Lecture",building:"Composition page",ready:"Prêt",done:"PDF enregistré",
     photo:"Photo",page:"Page",generated:"Généré le",total:"Nombre de photos",
     note:"Chaque empreinte SHA-256 est calculée sur le fichier image original. Date, coordonnées et appareil proviennent des métadonnées EXIF du fichier ; les champs vides n'ont pas été enregistrés par l'appareil.",
     exhibit:"Pièces photographiques"},
-  sw:{app:"Ripoti ya Picha",sub:"Nje ya mtandao · SHA-256 · EXIF",caseinfo:"Taarifa za kesi",
+  sw:{app:"Ripoti ya Picha",sub:"Nje ya mtandao · SHA-256 · EXIF · 1-1",caseinfo:"Taarifa za kesi",
     author:"Mwandishi",caseno:"Namba ya kesi",photos:"Picha",add:"Piga au chagua picha",
     hint:"Viwianishi husomwa kutoka data ya EXIF ya kila picha. Washa mahali kwenye kamera kabla ya kupiga, la sivyo sehemu hii itabaki tupu.",
     clear:"Futa zote",empty:"Hakuna picha bado.",go:"Tengeneza PDF",foot:"Hufanya kazi ndani ya kivinjari chako. Hakuna kinachopakiwa.",
     date:"Tarehe na saa",gps:"Viwianishi",cam:"Kamera",hash:"SHA-256",file:"Faili",remove:"Ondoa",
-    na:"haipo katika EXIF",unreadable:"Onyesho halipatikani katika kivinjari hiki",
+    na:"haipo katika EXIF",unreadable:"Onyesho halipatikani katika kivinjari hiki",rotate:"Kwa upande",
     reading:"Inasoma",building:"Inaunda ukurasa",ready:"Tayari",done:"PDF imehifadhiwa",
     photo:"Picha",page:"Ukurasa",generated:"Imetengenezwa",total:"Idadi ya picha",
     note:"Kila alama ya SHA-256 imehesabiwa kwa faili halisi ya picha. Tarehe, viwianishi na kamera husomwa kutoka metadata ya EXIF; sehemu tupu hazikurekodiwa na kifaa kilichopiga picha.",
     exhibit:"Vielelezo vya picha"},
-  ln:{app:"Lapolo ya Bafoto",sub:"Sans internet · SHA-256 · EXIF",caseinfo:"Makambo ya dosye",
+  ln:{app:"Lapolo ya Bafoto",sub:"Sans internet · SHA-256 · EXIF · 1-1",caseinfo:"Makambo ya dosye",
     author:"Mokomi",caseno:"Nimero ya dosye",photos:"Bafoto",add:"Kamata to pona bafoto",
     hint:"Esika (GPS) etangami na kati ya EXIF ya foto. Fungola esika na kamera liboso ya kokamata, soki te esika ekotikala mpamba.",
     clear:"Longola nyonso",empty:"Foto ezali nanu te.",go:"Sala PDF",foot:"Esalaka kaka na navigateur na yo. Eloko etindami te.",
     date:"Mokolo mpe ngonga",gps:"Esika (GPS)",cam:"Kamera",hash:"SHA-256",file:"Fisye",remove:"Longola",
-    na:"ezali na EXIF te",unreadable:"Elilingi emonani te na navigateur oyo",
+    na:"ezali na EXIF te",unreadable:"Elilingi emonani te na navigateur oyo",rotate:"Na mopanzi",
     reading:"Kotanga",building:"Kosala lokasa",ready:"Ebongi",done:"PDF ebombami",
     photo:"Foto",page:"Lokasa",generated:"Esalemi na",total:"Motango ya bafoto",
     note:"SHA-256 nyonso etangami likolo ya fisye ya ebandeli ya foto. Mokolo, esika mpe kamera euti na EXIF ya fisye; bisika ya mpamba ekomamaki te na kamera.",
@@ -533,12 +539,15 @@ function render(){
       </div>
       <div class="actions">
         <button class="rm">${t.remove}</button>
+        <button class="rot${it.rot?" on":""}" ${it.aspect?"":"disabled"} aria-pressed="${!!it.rot}">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h11a4 4 0 0 1 4 4v6"/><path d="M7 6 4 9l3 3"/></svg>${t.rotate}</button>
         <span class="move">
           <button data-up ${i===0?"disabled":""} aria-label="up">&#9650;</button>
           <button data-dn ${i===items.length-1?"disabled":""} aria-label="down">&#9660;</button>
         </span>
       </div>`;
     row.querySelector(".rm").addEventListener("click",()=>{ items.splice(i,1); render(); });
+    row.querySelector(".rot").addEventListener("click",()=>{ items[i].rot=!items[i].rot; render(); });
     row.querySelectorAll(".move button").forEach(b=>b.addEventListener("click",()=>{
       const j=b.hasAttribute("data-up")?i-1:i+1;
       if(j<0||j>=items.length) return;
@@ -559,9 +568,16 @@ async function addFiles(files){
       const bytes=new Uint8Array(buf);
       const sha=await sha256(bytes);
       const ex=readExif(buf);
-      let thumb=null;
-      try{ const img=await loadImage(f); thumb=renderJPEG(img,ex,220,0.7).dataUrl; }catch(e){}
-      items.push({file:f,name:f.name||("image-"+k+".jpg"),size:f.size,sha,ex,thumb});
+      let thumb=null, aspect=0;
+      try{
+        const img=await loadImage(f);
+        const r=renderJPEG(img,ex,220,0.7);
+        thumb=r.dataUrl; aspect=r.w/r.h;
+      }catch(e){}
+      // Clearly-landscape photos turn sideways by default; near-square ones don't,
+      // since the extra size wouldn't pay for the reader having to turn the page.
+      items.push({file:f,name:f.name||("image-"+k+".jpg"),size:f.size,sha,ex,thumb,
+                  aspect, rot:aspect>1.2});
     }catch(e){ console.error(e); }
   }
   busy=false; status(""); render();
@@ -570,7 +586,9 @@ async function addFiles(files){
 /* ============================================================
    7. REPORT COMPOSITION
    ============================================================ */
-const TOP=PH-58, BOTTOM=52, SLOT=(TOP-BOTTOM)/2, IMGBOX=272;
+const TOP=PH-58, BOTTOM=52, CAPH=68;
+const UPW=PW-2*MG,     UPH=TOP-BOTTOM;   // upright frame: 505 x 732
+const RTW=TOP-BOTTOM,  RTH=PW-2*MG;      // rotated frame, as the reader sees it: 732 x 505
 
 function chrome(p, meta, no, total){
   const t=T();
@@ -607,38 +625,53 @@ function coverPage(meta, total){
   chrome(p, meta, 1, total);
   return p;
 }
-async function photoPage(slice, meta, pageNo, total, startIndex){
-  const t=T(), p=new PdfPage();
-  chrome(p, meta, pageNo, total);
-  for(let s=0;s<slice.length;s++){
-    const it=slice[s], top=TOP-s*SLOT;
-    let placed=false;
-    try{
-      const img=await loadImage(it.file);
-      const r=renderJPEG(img, it.ex, 1500, 0.82);
-      const bytes=dataUrlToBytes(r.dataUrl);
-      const k=Math.min((PW-2*MG)/r.w, IMGBOX/r.h);
-      const dw=r.w*k, dh=r.h*k, dx=(PW-dw)/2, dy=top-dh;
-      const ref=p.image(bytes,dx,dy,dw,dh); ref.pxW=r.w; ref.pxH=r.h;
-      p.rect(dx-0.5, dy-0.5, dw+1, dh+1, 0.72, 0.5);
-      placed=true;
-    }catch(e){
-      p.rect(MG, top-IMGBOX, PW-2*MG, IMGBOX, 0.8, 0.5);
-      p.textCenter(PW/2, top-IMGBOX/2, 9, t.unreadable, {gray:0.5});
-    }
-    let y=top-IMGBOX-13;
-    p.text(MG, y, 9.5, `${t.photo} ${String(startIndex+s+1).padStart(2,"0")}`, {bold:true, gray:0.06});
-    p.text(MG+52, y, 9, it.name, {gray:0.3});
-    p.line(MG, y-6, PW-MG, y-6, 0.85);
-    y-=17;
-    const gps = it.ex.lat!==undefined ? fmtCoord(it.ex.lat,it.ex.lon,it.ex.alt) : "—";
-    const date = fmtExifDate(it.ex.date||it.ex.dateFallback, it.ex.offset) || "—";
-    const cam = [it.ex.make,it.ex.model].filter(Boolean).join(" ") || "—";
-    for(const [k,v] of [[t.date,date],[t.gps,gps],[t.cam,cam],[t.hash,it.sha]]){
-      p.text(MG, y, 7.5, k.toUpperCase(), {gray:0.5});
-      p.text(MG+96, y, k===t.hash?7.5:8.5, v, {gray:0.12});
-      y-=11;
-    }
+/* Draws one photo plus its caption inside a frame whose origin is (left,bottom).
+   Used unchanged in both orientations: for a rotated page the caller has already
+   turned the coordinate system, so this code always works in the reader's frame. */
+function exhibit(p, it, index, left, bottom, frameW, frameH, bytes, iw, ih){
+  const t=T(), boxH=frameH-CAPH, top=bottom+frameH;
+  let capY;
+  if(bytes){
+    const k=Math.min(frameW/iw, boxH/ih);
+    const dw=iw*k, dh=ih*k, dx=left+(frameW-dw)/2, dy=top-dh;
+    const ref=p.image(bytes,dx,dy,dw,dh); ref.pxW=iw; ref.pxH=ih;
+    p.rect(dx-0.5, dy-0.5, dw+1, dh+1, 0.72, 0.5);
+    capY=dy-14;                       // caption hugs the photo, not the box
+  }else{
+    p.rect(left, top-boxH, frameW, boxH, 0.8, 0.5);
+    p.textCenter(left+frameW/2, top-boxH/2, 9, t.unreadable, {gray:0.5});
+    capY=top-boxH-14;
+  }
+  p.text(left, capY, 9.5, `${t.photo} ${String(index+1).padStart(2,"0")}`, {bold:true, gray:0.06});
+  p.text(left+54, capY, 9, it.name, {gray:0.3});
+  p.line(left, capY-6, left+frameW, capY-6, 0.85);
+  let y=capY-17;
+  const gps = it.ex.lat!==undefined ? fmtCoord(it.ex.lat,it.ex.lon,it.ex.alt) : "—";
+  const date = fmtExifDate(it.ex.date||it.ex.dateFallback, it.ex.offset) || "—";
+  const cam = [it.ex.make,it.ex.model].filter(Boolean).join(" ") || "—";
+  for(const [k,v] of [[t.date,date],[t.gps,gps],[t.cam,cam],[t.hash,it.sha]]){
+    p.text(left, y, 7.5, k.toUpperCase(), {gray:0.5});
+    p.text(left+96, y, k===t.hash?7.5:8.5, v, {gray:0.12});
+    y-=11;
+  }
+}
+async function photoPage(it, meta, pageNo, total, index){
+  const p=new PdfPage();
+  chrome(p, meta, pageNo, total);           // header/footer stay upright on every page
+  let bytes=null, iw=0, ih=0;
+  try{
+    const img=await loadImage(it.file);
+    const r=renderJPEG(img, it.ex, 2000, 0.82);
+    bytes=dataUrlToBytes(r.dataUrl); iw=r.w; ih=r.h;
+  }catch(e){}
+  if(it.rot && bytes){
+    // Turn the frame 90°: photo and caption rotate together, so they read as a
+    // pair when the sheet is turned clockwise. Content top sits at the left edge.
+    p.ops.push(`q 0 1 -1 0 ${(PW-MG).toFixed(2)} ${BOTTOM} cm`);
+    exhibit(p, it, index, 0, 0, RTW, RTH, bytes, iw, ih);
+    p.ops.push("Q");
+  }else{
+    exhibit(p, it, index, MG, BOTTOM, UPW, UPH, bytes, iw, ih);
   }
   return p;
 }
@@ -648,12 +681,12 @@ async function generate(){
   const t=T();
   const meta={author:$("author").value.trim(), caseno:$("caseno").value.trim(), stamp:localStamp(new Date())};
   try{ localStorage.setItem("pr.author",meta.author); localStorage.setItem("pr.case",meta.caseno); }catch(e){}
-  const total=1+Math.ceil(items.length/2);
+  const total=1+items.length;
   const pages=[coverPage(meta,total)];
-  for(let i=0;i<items.length;i+=2){
+  for(let i=0;i<items.length;i++){
     status(`${t.building} ${pages.length+1}/${total}`);
     await new Promise(r=>setTimeout(r,0));
-    pages.push(await photoPage(items.slice(i,i+2), meta, pages.length+1, total, i));
+    pages.push(await photoPage(items[i], meta, pages.length+1, total, i));
   }
   const blob=buildPdf(pages);
   const base=(meta.caseno||t.app).replace(/[^\w\-À-ÿ ]+/g,"_").trim().replace(/\s+/g,"-");
