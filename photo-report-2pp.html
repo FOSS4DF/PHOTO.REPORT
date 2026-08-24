@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<title>Photographic Report</title>
+<style>
+:root{
+  --bg:#F2F4F5; --surface:#FFFFFF; --ink:#12171A; --muted:#69747C;
+  --rule:#DDE2E5; --rule-strong:#C2CACF; --accent:#125A63; --accent-ink:#FFFFFF;
+  --warn:#9A5B00; --warn-bg:#FBF0DE; --danger:#8E2C21;
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;
+  --ui:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+}
+html[data-theme="dark"]{
+  --bg:#0E1113; --surface:#171B1E; --ink:#E7EAEC; --muted:#8B959C;
+  --rule:#262B2F; --rule-strong:#394247; --accent:#4FA8A4; --accent-ink:#06181A;
+  --warn:#E0AC63; --warn-bg:#2A2015; --danger:#E0847A;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:var(--bg); color:var(--ink); font-family:var(--ui);
+  font-size:15px; line-height:1.45; -webkit-text-size-adjust:100%;
+  padding-bottom:calc(84px + env(safe-area-inset-bottom));
+}
+.wrap{max-width:760px;margin:0 auto;padding:0 20px}
+
+/* ---------- header ---------- */
+header{border-bottom:1px solid var(--rule);background:var(--surface)}
+.hbar{display:flex;align-items:center;gap:12px;padding:14px 0}
+.mark{width:26px;height:26px;flex:none;border:1.5px solid var(--ink);position:relative}
+.mark::after{content:"";position:absolute;inset:5px 5px auto 5px;height:1.5px;background:var(--ink)}
+.mark::before{content:"";position:absolute;left:5px;right:5px;bottom:5px;height:9px;border:1.5px solid var(--ink);border-bottom:none}
+h1{font-size:15px;font-weight:650;letter-spacing:-.01em;margin:0;flex:1}
+h1 small{display:block;font-weight:400;font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);margin-top:1px}
+.ctrl{display:flex;gap:8px;align-items:center}
+select,input,button{font-family:inherit;font-size:14px;color:var(--ink)}
+select.lang{appearance:none;-webkit-appearance:none;background:transparent;border:1px solid var(--rule-strong);
+  border-radius:3px;padding:6px 8px;font-size:12px;letter-spacing:.06em;font-weight:600}
+.icon-btn{background:transparent;border:1px solid var(--rule-strong);border-radius:3px;width:32px;height:31px;
+  display:grid;place-items:center;cursor:pointer;padding:0}
+.icon-btn:hover{border-color:var(--ink)}
+.icon-btn svg{width:15px;height:15px;stroke:var(--ink);fill:none;stroke-width:1.6}
+
+/* ---------- fields ---------- */
+section{margin-top:22px}
+.eyebrow{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:9px}
+.fields{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:520px){.fields{grid-template-columns:1fr}}
+.field label{display:block;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:5px}
+.field input{width:100%;background:var(--surface);border:1px solid var(--rule-strong);border-radius:3px;
+  padding:10px 11px;font-size:15px;font-family:var(--mono)}
+.field input:focus{outline:2px solid var(--accent);outline-offset:-1px;border-color:var(--accent)}
+
+/* ---------- add ---------- */
+.add{margin-top:14px;width:100%;display:flex;align-items:center;justify-content:center;gap:9px;
+  background:var(--surface);border:1px dashed var(--rule-strong);border-radius:3px;padding:18px;
+  cursor:pointer;font-size:15px;font-weight:600;color:var(--ink)}
+.add:hover{border-color:var(--accent);color:var(--accent)}
+.add svg{width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:1.7}
+.hint{font-size:12px;color:var(--muted);margin-top:8px;line-height:1.5}
+
+/* ---------- list ---------- */
+.count{display:flex;align-items:baseline;justify-content:space-between;gap:10px;border-bottom:1px solid var(--rule);padding-bottom:7px;margin-bottom:2px}
+.count b{font-family:var(--mono);font-size:12px;font-weight:600}
+.linkbtn{background:none;border:none;padding:0;color:var(--muted);font-size:12px;cursor:pointer;text-decoration:underline;text-underline-offset:2px}
+.linkbtn:hover{color:var(--danger)}
+.empty{border:1px solid var(--rule);border-radius:3px;background:var(--surface);padding:26px 18px;text-align:center;color:var(--muted);font-size:13px}
+
+.item{display:grid;grid-template-columns:14px 92px 1fr;gap:12px;padding:14px 0;border-bottom:1px solid var(--rule);align-items:start}
+@media(max-width:520px){.item{grid-template-columns:14px 68px 1fr;gap:9px}}
+.idx{font-family:var(--mono);font-size:11px;color:var(--muted);padding-top:2px;font-variant-numeric:tabular-nums}
+.thumb{width:100%;aspect-ratio:1;object-fit:cover;background:var(--rule);border:1px solid var(--rule-strong);display:block}
+.thumb.na{display:grid;place-items:center;font-size:10px;color:var(--muted);text-align:center;padding:4px;aspect-ratio:1}
+.meta{min-width:0}
+.fname{font-size:13px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-bottom:6px}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:2px 10px;font-size:11px}
+.kv dt{color:var(--muted);letter-spacing:.06em;text-transform:uppercase;font-size:9.5px;font-weight:600;padding-top:1.5px}
+.kv dd{margin:0;font-family:var(--mono);font-size:11px;word-break:break-all;line-height:1.4}
+.miss{color:var(--warn);background:var(--warn-bg);padding:0 4px;border-radius:2px;font-family:var(--ui);font-size:10px;letter-spacing:.04em}
+.actions{grid-column:3;display:flex;align-items:center;gap:14px;margin-top:8px}
+.rm{background:none;border:none;padding:0;color:var(--muted);font-size:11px;cursor:pointer;text-decoration:underline;text-underline-offset:2px}
+.rm:hover{color:var(--danger)}
+.move{display:inline-flex;gap:3px}
+.move button{background:none;border:1px solid var(--rule-strong);border-radius:2px;width:20px;height:18px;line-height:1;
+  font-size:10px;color:var(--muted);cursor:pointer;padding:0}
+.move button:hover:not(:disabled){color:var(--ink);border-color:var(--ink)}
+.move button:disabled{opacity:.3;cursor:default}
+
+/* ---------- bar ---------- */
+.bar{position:fixed;left:0;right:0;bottom:0;background:var(--surface);border-top:1px solid var(--rule);
+  padding:12px 20px calc(12px + env(safe-area-inset-bottom));z-index:5}
+.bar-in{max-width:760px;margin:0 auto;display:flex;gap:12px;align-items:center}
+.status{flex:1;font-size:11.5px;color:var(--muted);font-family:var(--mono);min-width:0}
+.go{background:var(--accent);color:var(--accent-ink);border:none;border-radius:3px;padding:13px 22px;
+  font-size:15px;font-weight:650;cursor:pointer;letter-spacing:.01em}
+.go:disabled{opacity:.4;cursor:default}
+.go:focus-visible,.add:focus-visible,.icon-btn:focus-visible,select:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+footer{margin:26px 0 6px;font-size:11px;color:var(--muted);text-align:center;line-height:1.6}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap hbar">
+    <div class="mark" aria-hidden="true"></div>
+    <h1><span id="t-app">Photographic Report</span><small id="t-sub">Offline · SHA-256 · EXIF · 1-2</small></h1>
+    <div class="ctrl">
+      <select class="lang" id="lang" aria-label="Language">
+        <option value="en">EN</option><option value="fr">FR</option>
+        <option value="sw">SW</option><option value="ln">LN</option>
+      </select>
+      <button class="icon-btn" id="theme" aria-label="Theme">
+        <svg id="ticon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M19.1 4.9l-1.4 1.4M6.3 17.7l-1.4 1.4"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <section>
+    <div class="eyebrow" id="t-caseinfo">Case information</div>
+    <div class="fields">
+      <div class="field"><label for="author" id="t-author">Author</label><input id="author" autocomplete="off" spellcheck="false"></div>
+      <div class="field"><label for="caseno" id="t-case">Case number</label><input id="caseno" autocomplete="off" spellcheck="false"></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="eyebrow" id="t-photos">Photos</div>
+    <button class="add" id="add">
+      <svg viewBox="0 0 24 24"><path d="M3 8.5h4l1.6-2.5h6.8L17 8.5h4v11H3z"/><circle cx="12" cy="13.5" r="3.6"/></svg>
+      <span id="t-add">Take or choose photos</span>
+    </button>
+    <input type="file" id="file" accept="image/*" multiple class="sr">
+    <p class="hint" id="t-hint">Coordinates are read from each photo's EXIF data. Enable location for your camera app before shooting, or the field stays empty.</p>
+  </section>
+
+  <section>
+    <div class="count"><b id="cnt">0</b><button class="linkbtn" id="clear" hidden>Clear all</button></div>
+    <div id="list"></div>
+    <div class="empty" id="empty">No photos yet.</div>
+  </section>
+
+  <footer id="t-foot">Runs entirely in your browser. Nothing is uploaded.</footer>
+</main>
+
+<div class="bar">
+  <div class="bar-in">
+    <div class="status" id="status"></div>
+    <button class="go" id="go" disabled>Generate PDF</button>
+  </div>
+</div>
+
+<script>
+"use strict";
+
+/* ============================================================
+   1. LANGUAGES
+   ============================================================ */
+const I18N = {
+  en:{app:"Photographic Report",sub:"Offline · SHA-256 · EXIF · 1-2",caseinfo:"Case information",
+    author:"Author",caseno:"Case number",photos:"Photos",add:"Take or choose photos",
+    hint:"Coordinates are read from each photo's EXIF data. Enable location for your camera app before shooting, or the field stays empty.",
+    clear:"Clear all",empty:"No photos yet.",go:"Generate PDF",foot:"Runs entirely in your browser. Nothing is uploaded.",
+    date:"Date & time",gps:"Coordinates",cam:"Camera",hash:"SHA-256",file:"File",remove:"Remove",
+    na:"not in EXIF",unreadable:"Preview unavailable in this browser",
+    reading:"Reading",building:"Building page",ready:"Ready",done:"PDF saved",
+    photo:"Photo",page:"Page",generated:"Generated",total:"Number of photos",
+    note:"Each SHA-256 hash is computed on the original image file. Date, coordinates and camera are read from the file's EXIF metadata; empty fields were not recorded by the capturing device.",
+    exhibit:"Photographic exhibits"},
+  fr:{app:"Rapport photographique",sub:"Hors ligne · SHA-256 · EXIF · 1-2",caseinfo:"Informations du dossier",
+    author:"Auteur",caseno:"Numéro de dossier",photos:"Photos",add:"Prendre ou choisir des photos",
+    hint:"Les coordonnées sont lues dans les données EXIF de chaque photo. Activez la localisation de l'appareil photo avant la prise de vue, sinon le champ reste vide.",
+    clear:"Tout effacer",empty:"Aucune photo.",go:"Générer le PDF",foot:"Fonctionne entièrement dans votre navigateur. Rien n'est envoyé.",
+    date:"Date et heure",gps:"Coordonnées",cam:"Appareil",hash:"SHA-256",file:"Fichier",remove:"Supprimer",
+    na:"absent de l'EXIF",unreadable:"Aperçu indisponible dans ce navigateur",
+    reading:"Lecture",building:"Composition page",ready:"Prêt",done:"PDF enregistré",
+    photo:"Photo",page:"Page",generated:"Généré le",total:"Nombre de photos",
+    note:"Chaque empreinte SHA-256 est calculée sur le fichier image original. Date, coordonnées et appareil proviennent des métadonnées EXIF du fichier ; les champs vides n'ont pas été enregistrés par l'appareil.",
+    exhibit:"Pièces photographiques"},
+  sw:{app:"Ripoti ya Picha",sub:"Nje ya mtandao · SHA-256 · EXIF · 1-2",caseinfo:"Taarifa za kesi",
+    author:"Mwandishi",caseno:"Namba ya kesi",photos:"Picha",add:"Piga au chagua picha",
+    hint:"Viwianishi husomwa kutoka data ya EXIF ya kila picha. Washa mahali kwenye kamera kabla ya kupiga, la sivyo sehemu hii itabaki tupu.",
+    clear:"Futa zote",empty:"Hakuna picha bado.",go:"Tengeneza PDF",foot:"Hufanya kazi ndani ya kivinjari chako. Hakuna kinachopakiwa.",
+    date:"Tarehe na saa",gps:"Viwianishi",cam:"Kamera",hash:"SHA-256",file:"Faili",remove:"Ondoa",
+    na:"haipo katika EXIF",unreadable:"Onyesho halipatikani katika kivinjari hiki",
+    reading:"Inasoma",building:"Inaunda ukurasa",ready:"Tayari",done:"PDF imehifadhiwa",
+    photo:"Picha",page:"Ukurasa",generated:"Imetengenezwa",total:"Idadi ya picha",
+    note:"Kila alama ya SHA-256 imehesabiwa kwa faili halisi ya picha. Tarehe, viwianishi na kamera husomwa kutoka metadata ya EXIF; sehemu tupu hazikurekodiwa na kifaa kilichopiga picha.",
+    exhibit:"Vielelezo vya picha"},
+  ln:{app:"Lapolo ya Bafoto",sub:"Sans internet · SHA-256 · EXIF · 1-2",caseinfo:"Makambo ya dosye",
+    author:"Mokomi",caseno:"Nimero ya dosye",photos:"Bafoto",add:"Kamata to pona bafoto",
+    hint:"Esika (GPS) etangami na kati ya EXIF ya foto. Fungola esika na kamera liboso ya kokamata, soki te esika ekotikala mpamba.",
+    clear:"Longola nyonso",empty:"Foto ezali nanu te.",go:"Sala PDF",foot:"Esalaka kaka na navigateur na yo. Eloko etindami te.",
+    date:"Mokolo mpe ngonga",gps:"Esika (GPS)",cam:"Kamera",hash:"SHA-256",file:"Fisye",remove:"Longola",
+    na:"ezali na EXIF te",unreadable:"Elilingi emonani te na navigateur oyo",
+    reading:"Kotanga",building:"Kosala lokasa",ready:"Ebongi",done:"PDF ebombami",
+    photo:"Foto",page:"Lokasa",generated:"Esalemi na",total:"Motango ya bafoto",
+    note:"SHA-256 nyonso etangami likolo ya fisye ya ebandeli ya foto. Mokolo, esika mpe kamera euti na EXIF ya fisye; bisika ya mpamba ekomamaki te na kamera.",
+    exhibit:"Bafoto ya nzeneneke"}
+};
+let LANG = "en";
+const T = () => I18N[LANG];
+
+/* ============================================================
+   2. SHA-256  (Web Crypto, with pure-JS fallback for file://)
+   ============================================================ */
+const K256=[0x428a2f98,0x71374491,0xb5c0fbcf,0xe9b5dba5,0x3956c25b,0x59f111f1,0x923f82a4,0xab1c5ed5,
+0xd807aa98,0x12835b01,0x243185be,0x550c7dc3,0x72be5d74,0x80deb1fe,0x9bdc06a7,0xc19bf174,
+0xe49b69c1,0xefbe4786,0x0fc19dc6,0x240ca1cc,0x2de92c6f,0x4a7484aa,0x5cb0a9dc,0x76f988da,
+0x983e5152,0xa831c66d,0xb00327c8,0xbf597fc7,0xc6e00bf3,0xd5a79147,0x06ca6351,0x14292967,
+0x27b70a85,0x2e1b2138,0x4d2c6dfc,0x53380d13,0x650a7354,0x766a0abb,0x81c2c92e,0x92722c85,
+0xa2bfe8a1,0xa81a664b,0xc24b8b70,0xc76c51a3,0xd192e819,0xd6990624,0xf40e3585,0x106aa070,
+0x19a4c116,0x1e376c08,0x2748774c,0x34b0bcb5,0x391c0cb3,0x4ed8aa4a,0x5b9cca4f,0x682e6ff3,
+0x748f82ee,0x78a5636f,0x84c87814,0x8cc70208,0x90befffa,0xa4506ceb,0xbef9a3f7,0xc67178f2];
+const rotr=(x,n)=>(x>>>n)|(x<<(32-n));
+function sha256js(data){
+  const H=[0x6a09e667,0xbb67ae85,0x3c6ef372,0xa54ff53a,0x510e527f,0x9b05688c,0x1f83d9ab,0x5be0cd19];
+  const l=data.length, padded=new Uint8Array((((l+8)>>6)+1)<<6);
+  padded.set(data); padded[l]=0x80;
+  const dv=new DataView(padded.buffer);
+  dv.setUint32(padded.length-8, Math.floor(l/536870912));
+  dv.setUint32(padded.length-4, (l*8)>>>0);
+  const w=new Uint32Array(64);
+  for(let i=0;i<padded.length;i+=64){
+    for(let j=0;j<16;j++) w[j]=dv.getUint32(i+j*4);
+    for(let j=16;j<64;j++){
+      const a1=w[j-15], a2=w[j-2];
+      const s0=rotr(a1,7)^rotr(a1,18)^(a1>>>3), s1=rotr(a2,17)^rotr(a2,19)^(a2>>>10);
+      w[j]=(w[j-16]+s0+w[j-7]+s1)>>>0;
+    }
+    let a=H[0],b=H[1],c=H[2],d=H[3],e=H[4],f=H[5],g=H[6],h=H[7];
+    for(let j=0;j<64;j++){
+      const S1=rotr(e,6)^rotr(e,11)^rotr(e,25), ch=(e&f)^(~e&g);
+      const t1=(h+S1+ch+K256[j]+w[j])>>>0;
+      const S0=rotr(a,2)^rotr(a,13)^rotr(a,22), mj=(a&b)^(a&c)^(b&c);
+      const t2=(S0+mj)>>>0;
+      h=g;g=f;f=e;e=(d+t1)>>>0;d=c;c=b;b=a;a=(t1+t2)>>>0;
+    }
+    H[0]=(H[0]+a)>>>0;H[1]=(H[1]+b)>>>0;H[2]=(H[2]+c)>>>0;H[3]=(H[3]+d)>>>0;
+    H[4]=(H[4]+e)>>>0;H[5]=(H[5]+f)>>>0;H[6]=(H[6]+g)>>>0;H[7]=(H[7]+h)>>>0;
+  }
+  return H.map(x=>x.toString(16).padStart(8,"0")).join("");
+}
+async function sha256(bytes){
+  try{
+    if(self.crypto && crypto.subtle && crypto.subtle.digest){
+      const d=await crypto.subtle.digest("SHA-256", bytes);
+      return [...new Uint8Array(d)].map(b=>b.toString(16).padStart(2,"0")).join("");
+    }
+  }catch(e){}
+  return sha256js(bytes);
+}
+
+/* ============================================================
+   3. EXIF READER  (JPEG APP1 / TIFF)
+   ============================================================ */
+function readExif(buf){
+  const out={};
+  try{
+    const dv=new DataView(buf);
+    if(dv.byteLength<4 || dv.getUint16(0)!==0xFFD8) return out;
+    let off=2;
+    while(off+4<dv.byteLength){
+      if(dv.getUint8(off)!==0xFF) break;
+      const marker=dv.getUint8(off+1);
+      if(marker===0xD8||marker===0x01||(marker>=0xD0&&marker<=0xD7)){ off+=2; continue; }
+      if(marker===0xDA) break;
+      const size=dv.getUint16(off+2);
+      if(marker===0xE1 && off+10<dv.byteLength && dv.getUint32(off+4)===0x45786966){
+        readTiff(dv, off+10, out); break;
+      }
+      off+=2+size;
+    }
+  }catch(e){}
+  return out;
+}
+function readTiff(dv, base, out){
+  const le = dv.getUint16(base)===0x4949;
+  const u16=o=>dv.getUint16(o,le), u32=o=>dv.getUint32(o,le);
+  if(u16(base+2)!==0x2A) return;
+  const ifd0 = base + u32(base+4);
+  const val=(entry)=>{
+    const type=u16(entry+2), count=u32(entry+4);
+    const sizes={1:1,2:1,3:2,4:4,5:8,6:1,7:1,8:2,9:4,10:8};
+    const total=(sizes[type]||1)*count;
+    const p = total>4 ? base+u32(entry+8) : entry+8;
+    if(p<0||p+total>dv.byteLength) return null;
+    if(type===2){ let s=""; for(let i=0;i<count;i++){ const c=dv.getUint8(p+i); if(!c)break; s+=String.fromCharCode(c);} return s.trim(); }
+    const one=i=>{
+      if(type===3) return u16(p+i*2);
+      if(type===4) return u32(p+i*4);
+      if(type===5) return u32(p+i*8)/(u32(p+i*8+4)||1);
+      if(type===10) return dv.getInt32(p+i*8,le)/(dv.getInt32(p+i*8+4,le)||1);
+      if(type===1) return dv.getUint8(p+i);
+      if(type===9) return dv.getInt32(p+i*4,le);
+      return null;
+    };
+    if(count===1) return one(0);
+    const arr=[]; for(let i=0;i<count;i++) arr.push(one(i)); return arr;
+  };
+  const scan=(ifd, map)=>{
+    if(ifd<=base || ifd+2>dv.byteLength) return;
+    const n=u16(ifd);
+    if(n>512) return;
+    for(let i=0;i<n;i++){
+      const e=ifd+2+i*12, tag=u16(e);
+      if(map[tag]!==undefined) map[tag](val(e));
+    }
+  };
+  let exifPtr=0, gpsPtr=0;
+  scan(ifd0,{
+    0x010F:v=>out.make=v, 0x0110:v=>out.model=v, 0x0112:v=>out.orientation=v,
+    0x0132:v=>out.dateFallback=v, 0x8769:v=>exifPtr=v, 0x8825:v=>gpsPtr=v
+  });
+  if(exifPtr) scan(base+exifPtr,{
+    0x9003:v=>out.date=v, 0x9011:v=>out.offset=v, 0x8827:v=>out.iso=v,
+    0xA002:v=>out.pxX=v, 0xA003:v=>out.pxY=v, 0xA430:v=>out.owner=v, 0x8825:v=>gpsPtr=gpsPtr||v
+  });
+  if(gpsPtr){
+    const g={};
+    scan(base+gpsPtr,{
+      0x0001:v=>g.latRef=v, 0x0002:v=>g.lat=v, 0x0003:v=>g.lonRef=v, 0x0004:v=>g.lon=v,
+      0x0005:v=>g.altRef=v, 0x0006:v=>g.alt=v, 0x0007:v=>g.time=v, 0x001D:v=>g.date=v
+    });
+    const dms=a=>Array.isArray(a)&&a.length>=3 ? a[0]+a[1]/60+a[2]/3600 : (typeof a==="number"?a:null);
+    const la=dms(g.lat), lo=dms(g.lon);
+    if(la!==null&&lo!==null&&isFinite(la)&&isFinite(lo)){
+      out.lat = (g.latRef==="S"?-1:1)*la;
+      out.lon = (g.lonRef==="W"?-1:1)*lo;
+      if(typeof g.alt==="number"&&isFinite(g.alt)) out.alt=(g.altRef===1?-1:1)*g.alt;
+    }
+  }
+}
+function fmtExifDate(s, offset){
+  if(!s) return "";
+  const m=/^(\d{4})[:\-](\d{2})[:\-](\d{2})[ T](\d{2}):(\d{2}):(\d{2})/.exec(s);
+  if(!m) return s;
+  return `${m[1]}-${m[2]}-${m[3]} ${m[4]}:${m[5]}:${m[6]}` + (offset?` (UTC${offset})`:"");
+}
+function fmtCoord(lat,lon,alt){
+  if(lat===undefined||lon===undefined) return "";
+  let s=`${lat.toFixed(6)}, ${lon.toFixed(6)}`;
+  if(alt!==undefined) s+=`  ·  ${Math.round(alt)} m`;
+  return s;
+}
+function localStamp(d){
+  const p=n=>String(n).padStart(2,"0");
+  const tz=-d.getTimezoneOffset(), sg=tz<0?"-":"+", ta=Math.abs(tz);
+  return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}:${p(d.getSeconds())} (UTC${sg}${p(Math.floor(ta/60))}:${p(ta%60)})`;
+}
+
+/* ============================================================
+   4. IMAGE DECODE + ORIENTATION
+   ============================================================ */
+function loadImage(file){
+  return new Promise((res,rej)=>{
+    const url=URL.createObjectURL(file), img=new Image();
+    img.onload=()=>{URL.revokeObjectURL(url);res(img);};
+    img.onerror=()=>{URL.revokeObjectURL(url);rej(new Error("decode"));};
+    img.src=url;
+  });
+}
+/* Modern browsers auto-apply EXIF orientation when drawing. Detect the rare
+   case where they did not, by comparing the decoded size to the EXIF size. */
+function manualRotation(ex, img){
+  const o=ex.orientation||1;
+  if(o<5 || o>8) return 0;
+  if(ex.pxX && ex.pxY && ex.pxX!==ex.pxY){
+    if(img.naturalWidth===ex.pxY) return 0;      // browser already rotated
+  } else return 0;                                // unknown: trust the browser
+  return o===6?90 : o===8?270 : o===5?90 : 270;
+}
+function renderJPEG(img, ex, maxEdge, quality){
+  const rot=manualRotation(ex,img);
+  let w=img.naturalWidth, h=img.naturalHeight;
+  if(rot===90||rot===270){ const t=w; w=h; h=t; }
+  const k=Math.min(1, maxEdge/Math.max(w,h));
+  const cw=Math.max(1,Math.round(w*k)), ch=Math.max(1,Math.round(h*k));
+  const cv=document.createElement("canvas"); cv.width=cw; cv.height=ch;
+  const cx=cv.getContext("2d");
+  cx.fillStyle="#fff"; cx.fillRect(0,0,cw,ch);
+  cx.save();
+  if(rot===90){ cx.translate(cw,0); cx.rotate(Math.PI/2); cx.drawImage(img,0,0,ch,cw); }
+  else if(rot===270){ cx.translate(0,ch); cx.rotate(-Math.PI/2); cx.drawImage(img,0,0,ch,cw); }
+  else cx.drawImage(img,0,0,cw,ch);
+  cx.restore();
+  return {dataUrl:cv.toDataURL("image/jpeg",quality), w:cw, h:ch};
+}
+function dataUrlToBytes(u){
+  const bin=atob(u.slice(u.indexOf(",")+1));
+  const a=new Uint8Array(bin.length);
+  for(let i=0;i<bin.length;i++) a[i]=bin.charCodeAt(i);
+  return a;
+}
+
+/* ============================================================
+   5. MINIMAL PDF WRITER (A4, Helvetica, DCTDecode images)
+   ============================================================ */
+const HW=[278,278,355,556,556,889,667,191,333,333,389,584,278,333,278,278,556,556,556,556,556,556,556,556,556,556,278,278,584,584,584,556,1015,667,667,722,722,667,611,778,722,278,500,667,556,833,722,778,667,778,722,667,611,722,667,944,667,667,611,278,278,278,469,556,333,556,556,500,556,556,278,556,556,222,222,500,222,833,556,556,556,556,333,500,278,556,500,722,500,500,500,334,260,334,584];
+function textWidth(s,size,bold){
+  let w=0;
+  for(let i=0;i<s.length;i++){ const c=s.charCodeAt(i); w += (c>=32&&c<=126)?HW[c-32]:556; }
+  return w/1000*size*(bold?1.07:1);
+}
+const WINANSI={0x2013:0x96,0x2014:0x97,0x2018:0x91,0x2019:0x92,0x201C:0x93,0x201D:0x94,
+  0x2022:0x95,0x2026:0x85,0x20AC:0x80,0x2122:0x99,0x0152:0x8C,0x0153:0x9C,0x2039:0x8B,0x203A:0x9B};
+function pdfEsc(s){
+  let o="(";
+  for(const ch of String(s)){
+    let c=ch.codePointAt(0);
+    if(c>255) c=WINANSI[c]||63;
+    if(c===40||c===41||c===92) o+="\\"+String.fromCharCode(c);
+    else if(c<32||c>126) o+="\\"+c.toString(8).padStart(3,"0");
+    else o+=String.fromCharCode(c);
+  }
+  return o+")";
+}
+const PW=595.28, PH=841.89, MG=45;
+class PdfPage{
+  constructor(){ this.ops=[]; this.xobjs=[]; }
+  text(x,y,size,str,{bold=false,gray=0.08}={}){
+    if(str===""||str===null||str===undefined) return;
+    this.ops.push(`BT ${gray.toFixed(3)} ${gray.toFixed(3)} ${gray.toFixed(3)} rg /${bold?"F2":"F1"} ${size} Tf ${x.toFixed(2)} ${y.toFixed(2)} Td ${pdfEsc(str)} Tj ET`);
+  }
+  textRight(x,y,size,str,o={}){ this.text(x-textWidth(String(str),size,o.bold),y,size,str,o); }
+  textCenter(x,y,size,str,o={}){ this.text(x-textWidth(String(str),size,o.bold)/2,y,size,str,o); }
+  line(x1,y1,x2,y2,gray=0.78,w=0.6){
+    this.ops.push(`${gray} ${gray} ${gray} RG ${w} w ${x1.toFixed(2)} ${y1.toFixed(2)} m ${x2.toFixed(2)} ${y2.toFixed(2)} l S`);
+  }
+  rect(x,y,w,h,gray=0.8,lw=0.6){
+    this.ops.push(`${gray} ${gray} ${gray} RG ${lw} w ${x.toFixed(2)} ${y.toFixed(2)} ${w.toFixed(2)} ${h.toFixed(2)} re S`);
+  }
+  image(bytes,x,y,w,h){
+    const name="Im"+(this.xobjs.length+1);
+    this.xobjs.push({name,bytes,w:0,h:0});
+    this.ops.push(`q ${w.toFixed(2)} 0 0 ${h.toFixed(2)} ${x.toFixed(2)} ${y.toFixed(2)} cm /${name} Do Q`);
+    return this.xobjs[this.xobjs.length-1];
+  }
+  stream(){ return this.ops.join("\n"); }
+}
+function bytesOf(str){ const a=new Uint8Array(str.length); for(let i=0;i<str.length;i++) a[i]=str.charCodeAt(i)&0xFF; return a; }
+function buildPdf(pages){
+  const chunks=[]; let len=0;
+  const push=d=>{ const b=typeof d==="string"?bytesOf(d):d; chunks.push(b); len+=b.length; };
+  const offsets=[0]; let n=4;                     // 1 cat, 2 pages, 3 F1, 4 F2
+  const plan=pages.map(p=>{
+    const imgs=p.xobjs.map(x=>({...x,num:++n}));
+    return {page:p, imgs, contentNum:++n, pageNum:++n};
+  });
+  const write=(num,parts)=>{ offsets[num]=len; push(num+" 0 obj\n"); parts.forEach(push); push("\nendobj\n"); };
+  push("%PDF-1.4\n%\xE2\xE3\xCF\xD3\n");
+  write(1,["<< /Type /Catalog /Pages 2 0 R >>"]);
+  write(2,[`<< /Type /Pages /Count ${plan.length} /Kids [${plan.map(p=>p.pageNum+" 0 R").join(" ")}] >>`]);
+  write(3,["<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>"]);
+  write(4,["<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>"]);
+  for(const p of plan){
+    for(const im of p.imgs){
+      write(im.num,[`<< /Type /XObject /Subtype /Image /Width ${im.pxW} /Height ${im.pxH} /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length ${im.bytes.length} >>\nstream\n`, im.bytes, "\nendstream"]);
+    }
+    const cs=p.page.stream();
+    write(p.contentNum,[`<< /Length ${cs.length} >>\nstream\n${cs}\nendstream`]);
+    const xo=p.imgs.length?` /XObject << ${p.imgs.map(i=>"/"+i.name+" "+i.num+" 0 R").join(" ")} >>`:"";
+    write(p.pageNum,[`<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${PW} ${PH}] /Resources << /Font << /F1 3 0 R /F2 4 0 R >>${xo} >> /Contents ${p.contentNum} 0 R >>`]);
+  }
+  const xref=len;
+  let x=`xref\n0 ${n+1}\n0000000000 65535 f \n`;
+  for(let i=1;i<=n;i++) x+=String(offsets[i]||0).padStart(10,"0")+" 00000 n \n";
+  push(x);
+  push(`trailer\n<< /Size ${n+1} /Root 1 0 R >>\nstartxref\n${xref}\n%%EOF\n`);
+  const out=new Uint8Array(len); let o=0;
+  for(const c of chunks){ out.set(c,o); o+=c.length; }
+  return new Blob([out],{type:"application/pdf"});
+}
+
+/* ============================================================
+   6. STATE + UI
+   ============================================================ */
+const $=id=>document.getElementById(id);
+const items=[];
+let busy=false;
+
+function applyLang(){
+  const t=T();
+  document.documentElement.lang=LANG;
+  $("t-app").textContent=t.app; $("t-sub").textContent=t.sub;
+  $("t-caseinfo").textContent=t.caseinfo; $("t-author").textContent=t.author;
+  $("t-case").textContent=t.caseno; $("t-photos").textContent=t.photos;
+  $("t-add").textContent=t.add; $("t-hint").textContent=t.hint;
+  $("clear").textContent=t.clear; $("empty").textContent=t.empty;
+  $("go").textContent=t.go; $("t-foot").textContent=t.foot;
+  document.title=t.app;
+  render();
+}
+function setTheme(mode){
+  document.documentElement.dataset.theme=mode;
+  $("ticon").innerHTML = mode==="dark"
+    ? '<path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5z"/>'
+    : '<circle cx="12" cy="12" r="4.5"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M19.1 4.9l-1.4 1.4M6.3 17.7l-1.4 1.4"/>';
+  try{ localStorage.setItem("pr.theme",mode); }catch(e){}
+}
+function status(s){ $("status").textContent=s; }
+
+function render(){
+  const t=T(), list=$("list");
+  $("cnt").textContent=String(items.length).padStart(2,"0")+"  "+t.photos.toUpperCase();
+  $("empty").hidden=items.length>0;
+  $("clear").hidden=items.length===0;
+  $("go").disabled=items.length===0||busy;
+  list.innerHTML="";
+  items.forEach((it,i)=>{
+    const row=document.createElement("div"); row.className="item";
+    const gps = it.ex.lat!==undefined ? fmtCoord(it.ex.lat,it.ex.lon,it.ex.alt) : "";
+    const date = fmtExifDate(it.ex.date||it.ex.dateFallback, it.ex.offset);
+    const cam = [it.ex.make,it.ex.model].filter(Boolean).join(" ");
+    const miss=`<span class="miss">${t.na}</span>`;
+    row.innerHTML=`
+      <div class="idx">${String(i+1).padStart(2,"0")}</div>
+      ${it.thumb?`<img class="thumb" src="${it.thumb}" alt="">`:`<div class="thumb na">${t.unreadable}</div>`}
+      <div class="meta">
+        <div class="fname" title="${it.name.replace(/"/g,"&quot;")}">${it.name}</div>
+        <dl class="kv">
+          <dt>${t.date}</dt><dd>${date||miss}</dd>
+          <dt>${t.gps}</dt><dd>${gps||miss}</dd>
+          <dt>${t.cam}</dt><dd>${cam||miss}</dd>
+          <dt>${t.hash}</dt><dd>${it.sha}</dd>
+        </dl>
+      </div>
+      <div class="actions">
+        <button class="rm">${t.remove}</button>
+        <span class="move">
+          <button data-up ${i===0?"disabled":""} aria-label="up">&#9650;</button>
+          <button data-dn ${i===items.length-1?"disabled":""} aria-label="down">&#9660;</button>
+        </span>
+      </div>`;
+    row.querySelector(".rm").addEventListener("click",()=>{ items.splice(i,1); render(); });
+    row.querySelectorAll(".move button").forEach(b=>b.addEventListener("click",()=>{
+      const j=b.hasAttribute("data-up")?i-1:i+1;
+      if(j<0||j>=items.length) return;
+      [items[i],items[j]]=[items[j],items[i]]; render();
+    }));
+    list.appendChild(row);
+  });
+}
+
+async function addFiles(files){
+  const t=T(); busy=true; $("go").disabled=true;
+  let k=0;
+  for(const f of files){
+    k++; status(`${t.reading} ${k}/${files.length}`);
+    await new Promise(r=>setTimeout(r,0));
+    try{
+      const buf=await f.arrayBuffer();
+      const bytes=new Uint8Array(buf);
+      const sha=await sha256(bytes);
+      const ex=readExif(buf);
+      let thumb=null;
+      try{ const img=await loadImage(f); thumb=renderJPEG(img,ex,220,0.7).dataUrl; }catch(e){}
+      items.push({file:f,name:f.name||("image-"+k+".jpg"),size:f.size,sha,ex,thumb});
+    }catch(e){ console.error(e); }
+  }
+  busy=false; status(""); render();
+}
+
+/* ============================================================
+   7. REPORT COMPOSITION
+   ============================================================ */
+const TOP=PH-58, BOTTOM=52, SLOT=(TOP-BOTTOM)/2, IMGBOX=272;
+
+function chrome(p, meta, no, total){
+  const t=T();
+  p.text(MG, PH-40, 8, meta.caseno?`${t.caseno}: ${meta.caseno}`:"", {gray:0.42});
+  p.textRight(PW-MG, PH-40, 8, meta.author?`${t.author}: ${meta.author}`:"", {gray:0.42});
+  p.line(MG, PH-48, PW-MG, PH-48);
+  p.line(MG, 40, PW-MG, 40);
+  p.text(MG, 29, 8, `${t.generated} ${meta.stamp}`, {gray:0.42});
+  p.textRight(PW-MG, 29, 8, `${t.page} ${no} / ${total}`, {gray:0.42});
+}
+function coverPage(meta, total){
+  const t=T(), p=new PdfPage();
+  p.line(MG, PH-120, PW-MG, PH-120, 0.15, 1.4);
+  p.text(MG, PH-152, 10, t.exhibit.toUpperCase(), {gray:0.45});
+  p.text(MG, PH-192, 26, t.app, {bold:true, gray:0.06});
+  let y=PH-268;
+  const rows=[[t.caseno, meta.caseno||"—"],[t.author, meta.author||"—"],
+              [t.total, String(items.length)],[t.generated, meta.stamp]];
+  for(const [k,v] of rows){
+    p.text(MG, y, 8.5, k.toUpperCase(), {gray:0.45});
+    p.text(MG, y-15, 13, v, {bold:true, gray:0.06});
+    p.line(MG, y-24, PW-MG, y-24, 0.85);
+    y-=46;
+  }
+  const words=t.note.split(" ");
+  let line="", ly=y-34;
+  p.text(MG, ly+22, 8.5, "SHA-256 / EXIF", {gray:0.45});
+  for(const w of words){
+    const test=line?line+" "+w:w;
+    if(textWidth(test,8.5,false)>PW-2*MG){ p.text(MG,ly,8.5,line,{gray:0.35}); ly-=12; line=w; }
+    else line=test;
+  }
+  if(line) p.text(MG,ly,8.5,line,{gray:0.35});
+  chrome(p, meta, 1, total);
+  return p;
+}
+async function photoPage(slice, meta, pageNo, total, startIndex){
+  const t=T(), p=new PdfPage();
+  chrome(p, meta, pageNo, total);
+  for(let s=0;s<slice.length;s++){
+    const it=slice[s], top=TOP-s*SLOT;
+    let placed=false;
+    try{
+      const img=await loadImage(it.file);
+      const r=renderJPEG(img, it.ex, 1500, 0.82);
+      const bytes=dataUrlToBytes(r.dataUrl);
+      const k=Math.min((PW-2*MG)/r.w, IMGBOX/r.h);
+      const dw=r.w*k, dh=r.h*k, dx=(PW-dw)/2, dy=top-dh;
+      const ref=p.image(bytes,dx,dy,dw,dh); ref.pxW=r.w; ref.pxH=r.h;
+      p.rect(dx-0.5, dy-0.5, dw+1, dh+1, 0.72, 0.5);
+      placed=true;
+    }catch(e){
+      p.rect(MG, top-IMGBOX, PW-2*MG, IMGBOX, 0.8, 0.5);
+      p.textCenter(PW/2, top-IMGBOX/2, 9, t.unreadable, {gray:0.5});
+    }
+    let y=top-IMGBOX-13;
+    p.text(MG, y, 9.5, `${t.photo} ${String(startIndex+s+1).padStart(2,"0")}`, {bold:true, gray:0.06});
+    p.text(MG+52, y, 9, it.name, {gray:0.3});
+    p.line(MG, y-6, PW-MG, y-6, 0.85);
+    y-=17;
+    const gps = it.ex.lat!==undefined ? fmtCoord(it.ex.lat,it.ex.lon,it.ex.alt) : "—";
+    const date = fmtExifDate(it.ex.date||it.ex.dateFallback, it.ex.offset) || "—";
+    const cam = [it.ex.make,it.ex.model].filter(Boolean).join(" ") || "—";
+    for(const [k,v] of [[t.date,date],[t.gps,gps],[t.cam,cam],[t.hash,it.sha]]){
+      p.text(MG, y, 7.5, k.toUpperCase(), {gray:0.5});
+      p.text(MG+96, y, k===t.hash?7.5:8.5, v, {gray:0.12});
+      y-=11;
+    }
+  }
+  return p;
+}
+async function generate(){
+  if(busy||!items.length) return;
+  busy=true; $("go").disabled=true;
+  const t=T();
+  const meta={author:$("author").value.trim(), caseno:$("caseno").value.trim(), stamp:localStamp(new Date())};
+  try{ localStorage.setItem("pr.author",meta.author); localStorage.setItem("pr.case",meta.caseno); }catch(e){}
+  const total=1+Math.ceil(items.length/2);
+  const pages=[coverPage(meta,total)];
+  for(let i=0;i<items.length;i+=2){
+    status(`${t.building} ${pages.length+1}/${total}`);
+    await new Promise(r=>setTimeout(r,0));
+    pages.push(await photoPage(items.slice(i,i+2), meta, pages.length+1, total, i));
+  }
+  const blob=buildPdf(pages);
+  const base=(meta.caseno||t.app).replace(/[^\w\-À-ÿ ]+/g,"_").trim().replace(/\s+/g,"-");
+  const name=`${base}_${new Date().toISOString().slice(0,10)}.pdf`;
+  const url=URL.createObjectURL(blob), a=document.createElement("a");
+  a.href=url; a.download=name; a.rel="noopener";
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url), 60000);
+  status(`${t.done} · ${name}`);
+  busy=false; render();
+}
+
+/* ============================================================
+   8. WIRING
+   ============================================================ */
+$("add").addEventListener("click",()=>$("file").click());
+$("file").addEventListener("change",async e=>{
+  const f=[...e.target.files]; e.target.value="";
+  if(f.length) await addFiles(f);
+});
+$("clear").addEventListener("click",()=>{ items.length=0; status(""); render(); });
+$("go").addEventListener("click",generate);
+$("theme").addEventListener("click",()=>setTheme(document.documentElement.dataset.theme==="dark"?"light":"dark"));
+$("lang").addEventListener("change",e=>{ LANG=e.target.value; try{localStorage.setItem("pr.lang",LANG);}catch(err){} applyLang(); });
+["author","caseno"].forEach(id=>$(id).addEventListener("input",()=>{
+  try{ localStorage.setItem(id==="author"?"pr.author":"pr.case", $(id).value); }catch(e){}
+}));
+
+(function init(){
+  let saved={};
+  try{ saved={theme:localStorage.getItem("pr.theme"),lang:localStorage.getItem("pr.lang"),
+             author:localStorage.getItem("pr.author"),caseno:localStorage.getItem("pr.case")}; }catch(e){}
+  const prefersDark = window.matchMedia && matchMedia("(prefers-color-scheme: dark)").matches;
+  setTheme(saved.theme || (prefersDark?"dark":"light"));
+  if(saved.lang && I18N[saved.lang]) LANG=saved.lang;
+  $("lang").value=LANG;
+  if(saved.author) $("author").value=saved.author;
+  if(saved.caseno) $("caseno").value=saved.caseno;
+  applyLang();
+})();
+</script>
+</body>
+</html>
