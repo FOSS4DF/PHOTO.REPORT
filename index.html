@@ -1,10 +1,11 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="color-scheme" content="light dark">
-<title>Photographic Report</title>
+<link rel="icon" type="image/x-icon" href="https://www.peacekeeping.ch/setup/favicons/favicon-32x32.png">
+<title>Rapport photographique</title>
 <style>
 :root{
   --bg:#F2F4F5; --surface:#FFFFFF; --ink:#12171A; --muted:#69747C;
@@ -114,10 +115,10 @@ footer{margin:26px 0 6px;font-size:11px;color:var(--muted);text-align:center;lin
 <header>
   <div class="wrap hbar">
     <div class="mark" aria-hidden="true"></div>
-    <h1><span id="t-app">Photographic Report</span><small id="t-sub">Offline · SHA-256 · EXIF · 1-1</small></h1>
+    <h1><span id="t-app">Rapport photographique</span><small id="t-sub">Hors ligne · SHA-256 · EXIF · 1-1</small></h1>
     <div class="ctrl">
       <select class="lang" id="lang" aria-label="Language">
-        <option value="en">EN</option><option value="fr">FR</option>
+        <option value="fr">FR</option><option value="en">EN</option>
         <option value="sw">SW</option><option value="ln">LN</option>
       </select>
       <button class="icon-btn" id="theme" aria-label="Theme">
@@ -210,7 +211,7 @@ const I18N = {
     note:"SHA-256 nyonso etangami likolo ya fisye ya ebandeli ya foto. Mokolo, esika mpe kamera euti na EXIF ya fisye; bisika ya mpamba ekomamaki te na kamera.",
     exhibit:"Bafoto ya nzeneneke"}
 };
-let LANG = "en";
+let LANG = "fr";
 const T = () => I18N[LANG];
 
 /* ============================================================
