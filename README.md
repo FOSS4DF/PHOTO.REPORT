@@ -1,8 +1,8 @@
 <img src="images/icon.png" width="56" alt="">
 
-# EXIF Stamper
+# Rapport photographique · Photographic Report
 
-**`EXIF_STAMPER.html`** · Hors ligne · Aucune installation · Aucun envoi — *Offline · No install · No upload*
+**`PHOTO_REPORT.html`** · Hors ligne · Aucune installation · Aucun envoi — *Offline · No install · No upload*
 
 **[Français](#français) · [English](#english)**
 
@@ -12,25 +12,26 @@
 
 ### À quoi sert cet outil
 
-Cet outil lit la date, l'heure, les coordonnées GPS et le modèle d'appareil enregistrés dans les photos (métadonnées EXIF) et les incruste de façon visible dans l'image. Les informations de prise de vue restent ainsi lisibles, même si la photo est ensuite partagée par une messagerie qui supprime les métadonnées.
+Cet outil produit un rapport PDF de pièces photographiques : une photo par page, accompagnée de la date et de l'heure de prise de vue, des coordonnées GPS, de l'appareil utilisé et de l'empreinte SHA-256 du fichier original. Il sert à documenter des constatations (lieux, scènes, scellés) de manière traçable.
 
 ### Avant de commencer
 
-- Ouvrez le fichier EXIF_STAMPER.html par double-clic : il s'affiche dans votre navigateur (Chrome, Edge, Firefox ou Safari récents). Aucune installation n'est nécessaire.
+- Ouvrez le fichier PHOTO_REPORT.html par double-clic : il s'affiche dans votre navigateur (Chrome, Edge, Firefox ou Safari récents). Aucune installation n'est nécessaire.
 - L'outil fonctionne sans connexion Internet. Aucun fichier n'est envoyé : tout le traitement se fait sur votre appareil.
 - La langue (FR, EN, SW, LN) se choisit en haut à droite ; le bouton voisin bascule entre thème clair et sombre. Ces choix sont mémorisés.
+- Pour obtenir les coordonnées GPS, activez la localisation dans l'application appareil photo avant la prise de vue.
 
 ### L'écran en un coup d'œil
 
 ![Vue d'ensemble annotée de l'interface](images/overview_fr.png)
 
-1. Choisir ou déposer des images (JPEG ou TIFF)
-2. Réglages du tampon : position, taille, couleur, opacité, marge, qualité
-3. Informations à incruster
-4. « Aperçu » : contrôler le résultat avant de télécharger
-5. « Copier coord. » et lien Google Maps (Internet requis pour la carte)
-6. CSV : tableau des métadonnées de toutes les images (« Tout copier » les copie)
-7. Tamponner et tout télécharger
+1. Langue de l'interface et du rapport
+2. Thème clair ou sombre
+3. Auteur et numéro de dossier, repris en en-tête de chaque page
+4. Prendre ou choisir des photos
+5. « Pivoté » : la photo occupe la page en paysage (activé d'office pour les photos horizontales)
+6. Flèches haut et bas : changer l'ordre des photos
+7. Générer le PDF
 
 #### Sur téléphone (thème sombre)
 
@@ -38,32 +39,31 @@ Cet outil lit la date, l'heure, les coordonnées GPS et le modèle d'appareil en
 
 ### Utilisation pas à pas
 
-1. Ajoutez une ou plusieurs photos (JPEG ou TIFF).
-2. Contrôlez les informations lues pour chaque photo. La mention « Sans EXIF » signale une image sans métadonnées : elle ne peut pas être tamponnée.
-3. Réglez le tampon : position, taille de police, couleur du texte, opacité du fond, marge et qualité. Cochez les informations à afficher.
-4. Cliquez sur « Aperçu » pour contrôler le rendu, puis sur « Télécharger » pour une image, ou sur « Tamponner et tout télécharger » pour l'ensemble.
-5. Les images sont enregistrées avec le suffixe _stamped. Le fichier original n'est jamais modifié.
+1. Saisissez l'auteur et le numéro de dossier. Ils sont mémorisés pour la fois suivante.
+2. Cliquez sur « Prendre ou choisir des photos ». Sur téléphone, vous pouvez photographier directement ; sur ordinateur, sélectionnez une ou plusieurs images.
+3. Contrôlez chaque photo : date et heure, coordonnées, appareil, empreinte SHA-256. La mention « absent de l'EXIF » signale une information que l'appareil n'a pas enregistrée.
+4. Réglez l'ordre avec les flèches et l'orientation avec « Pivoté ». « Supprimer » retire une photo, « Tout effacer » vide la liste.
+5. Cliquez sur « Générer le PDF ». Le fichier est enregistré sous le nom NuméroDeDossier_AAAA-MM-JJ.pdf.
 
 ### Résultat
 
-![Image tamponnée (réglages par défaut](images/result1_fr.png)
+![Le rapport généré](images/result1_fr.png)
 
-*Image tamponnée (réglages par défaut : en bas à droite, texte blanc sur fond semi-transparent).*
+*Le rapport généré : page de garde (dossier, auteur, nombre de photos, date de génération, note de méthode), puis une page par photo avec ses métadonnées. Les photos en mode « Pivoté » sont présentées en paysage.*
 
 ### Bonnes pratiques
 
-- Le tampon est une copie visuelle : conservez toujours l'original. L'image tamponnée est un nouveau fichier, sans métadonnées EXIF et avec une empreinte différente ; elle ne remplace pas l'original comme pièce.
-- Pour un tirage papier, choisissez la qualité « Haute ».
-- Lors d'un téléchargement groupé, le navigateur peut demander l'autorisation d'enregistrer plusieurs fichiers : acceptez.
+- N'utilisez que les fichiers originaux. Une photo retouchée, recadrée ou transmise par WhatsApp ou un réseau social perd ses métadonnées et change d'empreinte.
+- Conservez les fichiers originaux avec le rapport : l'empreinte SHA-256 imprimée permet de prouver qu'une photo n'a pas été modifiée (vérification avec Forensic Hash Calculator).
+- La date et l'heure proviennent de l'horloge de l'appareil : vérifiez qu'elle est juste avant une mission.
 
 ### En cas de problème
 
 | Problème | Solution |
 |---|---|
-| **« Sans EXIF »** | La photo a transité par une messagerie ou est une capture d'écran. Utilisez le fichier original de l'appareil. |
-| **Photo d'iPhone (HEIC) non lue** | Réglez l'appareil photo sur « Le plus compatible » (JPEG) ou convertissez l'image en JPEG. |
-| **Tampon trop petit ou trop grand** | Ajustez la taille de police : elle s'adapte à la largeur de l'image. |
-| **Seules certaines images sont téléchargées** | Autorisez les téléchargements multiples pour ce fichier dans le navigateur, puis relancez. |
+| **Coordonnées « absent de l'EXIF »** | La localisation était désactivée, ou l'image a transité par une messagerie. Activez la localisation et utilisez le fichier original. |
+| **« Aperçu indisponible » (photo HEIC d'iPhone sur ordinateur)** | Ouvrez l'outil directement sur l'iPhone, ou réglez l'appareil photo sur « Le plus compatible » (JPEG). |
+| **Le PDF ne se télécharge pas** | Autorisez les téléchargements dans le navigateur. Sur iPhone, utilisez Safari puis « Enregistrer dans Fichiers ». |
 
 ### Confidentialité
 
@@ -75,25 +75,26 @@ L'outil fonctionne entièrement sur votre appareil, sans connexion Internet. Auc
 
 ### What this tool is for
 
-This tool reads the date, time, GPS coordinates and camera model stored in photos (EXIF metadata) and burns them visibly into the image. The capture information stays readable even if the photo is later shared through a messaging app that strips metadata.
+This tool produces a PDF report of photographic exhibits: one photo per page, with the capture date and time, GPS coordinates, camera model and the SHA-256 hash of the original file. It is used to document findings (places, scenes, sealed evidence) in a traceable way.
 
 ### Before you start
 
-- Double-click EXIF_STAMPER.html: it opens in your browser (recent Chrome, Edge, Firefox or Safari). Nothing to install.
+- Double-click PHOTO_REPORT.html: it opens in your browser (recent Chrome, Edge, Firefox or Safari). Nothing to install.
 - The tool works without an Internet connection. No file is uploaded: everything is processed on your device.
 - Choose the language (FR, EN, SW, LN) at the top right; the button next to it switches between light and dark theme. Both choices are remembered.
+- To record GPS coordinates, enable location in the camera app before taking the photos.
 
 ### The screen at a glance
 
 ![Annotated overview of the interface](images/overview_en.png)
 
-1. Choose or drop images (JPEG or TIFF)
-2. Stamp settings: position, size, colour, opacity, padding, quality
-3. Information to stamp
-4. “Preview”: check the result before downloading
-5. “Copy coords” and Google Maps link (Internet needed for the map)
-6. CSV: metadata table for all images (“Copy all” copies it)
-7. Stamp & download all
+1. Interface and report language
+2. Light or dark theme
+3. Author and case number, repeated in the header of every page
+4. Take or choose photos
+5. “Sideways”: the photo fills the page in landscape (on by default for horizontal photos)
+6. Up and down arrows: change the order of the photos
+7. Generate PDF
 
 #### On a phone (dark theme)
 
@@ -101,32 +102,31 @@ This tool reads the date, time, GPS coordinates and camera model stored in photo
 
 ### Step by step
 
-1. Add one or more photos (JPEG or TIFF).
-2. Check the information read from each photo. “No EXIF” marks an image without metadata: it cannot be stamped.
-3. Set up the stamp: position, font size, text colour, background opacity, padding and quality. Tick the information to show.
-4. Click “Preview” to check the result, then “Download” for one image, or “Stamp & download all” for every image.
-5. Images are saved with the _stamped suffix. The original file is never modified.
+1. Enter the author and the case number. They are remembered for next time.
+2. Click “Take or choose photos”. On a phone you can shoot directly; on a computer, select one or more images.
+3. Check each photo: date and time, coordinates, camera, SHA-256 hash. “not in EXIF” means the device did not record that information.
+4. Set the order with the arrows and the orientation with “Sideways”. “Remove” deletes a photo, “Clear all” empties the list.
+5. Click “Generate PDF”. The file is saved as CaseNumber_YYYY-MM-DD.pdf.
 
 ### Result
 
-![Stamped image (default settings](images/result1_en.png)
+![The generated report](images/result1_en.png)
 
-*Stamped image (default settings: bottom right, white text on a semi-transparent background).*
+*The generated report: cover page (case, author, number of photos, generation date, method note), then one page per photo with its metadata. “Sideways” photos are laid out in landscape.*
 
 ### Good practice
 
-- The stamp is a visual copy: always keep the original. The stamped image is a new file, without EXIF metadata and with a different hash; it does not replace the original as evidence.
-- For printing, choose “High” quality.
-- When downloading several images, the browser may ask permission to save multiple files: accept.
+- Only use original files. A photo that was edited, cropped or sent through WhatsApp or social media loses its metadata and its hash changes.
+- Keep the original files with the report: the printed SHA-256 hash proves a photo has not been altered (check it with Forensic Hash Calculator).
+- Date and time come from the device clock: make sure it is correct before a mission.
 
 ### Troubleshooting
 
 | Problem | Solution |
 |---|---|
-| **“No EXIF”** | The photo went through a messaging app or is a screenshot. Use the camera's original file. |
-| **iPhone photo (HEIC) not read** | Set the camera to “Most Compatible” (JPEG) or convert the image to JPEG. |
-| **Stamp too small or too large** | Adjust the font size: it scales with the image width. |
-| **Only some images download** | Allow multiple downloads for this file in the browser, then try again. |
+| **Coordinates “not in EXIF”** | Location was off, or the image went through a messaging app. Enable location and use the original file. |
+| **“Preview unavailable in this browser” (iPhone HEIC photo on a computer)** | Open the tool directly on the iPhone, or set the camera to “Most Compatible” (JPEG). |
+| **The PDF does not download** | Allow downloads in the browser. On iPhone, use Safari, then “Save to Files”. |
 
 ### Privacy
 
